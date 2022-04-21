@@ -1992,7 +1992,20 @@ babel-plugin-polyfill-regenerator@^0.3.0:
   dependencies:
     "@babel/helper-define-polyfill-provider" "^0.3.1"
 
-babel-runtime@6.x:
+babel-plugin-syntax-object-rest-spread@^6.8.0:
+  version "6.13.0"
+  resolved "http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/babel-plugin-syntax-object-rest-spread/-/babel-plugin-syntax-object-rest-spread-6.13.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fbabel-plugin-syntax-object-rest-spread%2F-%2Fbabel-plugin-syntax-object-rest-spread-6.13.0.tgz#fd6536f2bce13836ffa3a5458c4903a597bb3bf5"
+  integrity sha1-/WU28rzhODb/o6VFjEkDpZe7O/U=
+
+babel-plugin-transform-object-rest-spread@^6.26.0:
+  version "6.26.0"
+  resolved "http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.26.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fbabel-plugin-transform-object-rest-spread%2F-%2Fbabel-plugin-transform-object-rest-spread-6.26.0.tgz#0f36692d50fef6b7e2d4b3ac1478137a963b7b06"
+  integrity sha1-DzZpLVD+9rfi1LOsFHgTepY7ewY=
+  dependencies:
+    babel-plugin-syntax-object-rest-spread "^6.8.0"
+    babel-runtime "^6.26.0"
+
+babel-runtime@6.x, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/babel-runtime/-/babel-runtime-6.26.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fbabel-runtime%2F-%2Fbabel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
