@@ -13,6 +13,30 @@ export default {
     };
   },
 
+  props: {
+    longitude: {
+      type: String,
+      default: "",
+    },
+    latitude: {
+      type: String,
+      default: "",
+    },
+    elderUuid: {
+      type: String,
+      default: "",
+    },
+  },
+  watch: {
+    elderUuid() {
+      this.$nextTick(() => {
+        const _this = this;
+        MP(_this.ak).then((BMap) => {
+          _this.initMap();
+        });
+      });
+    },
+  },
   mounted() {
     this.$nextTick(() => {
       const _this = this;
@@ -21,6 +45,7 @@ export default {
       });
     });
   },
+
   methods: {
     initMap() {
       //   var map = new BMap.Map("map"); // 创建地图实例
@@ -33,7 +58,10 @@ export default {
       map.addControl(new BMap.ScaleControl());
       map.addControl(new BMap.OverviewMapControl());
       map.addControl(new BMap.MapTypeControl());
-      var point = new BMap.Point(116.331398, 39.897445);
+      var point = new BMap.Point(
+        parseFloat(this.longitude),
+        parseFloat(this.latitude)
+      );
       map.centerAndZoom(point, 12);
 
       var geolocation = new BMap.Geolocation();
@@ -42,7 +70,6 @@ export default {
           var mk = new BMap.Marker(r.point);
           map.addOverlay(mk);
           map.panTo(r.point);
-          // alert("您的位置：" + r.point.lng + "," + r.point.lat);
         } else {
           alert("failed" + this.getStatus());
         }

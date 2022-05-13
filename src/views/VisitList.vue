@@ -1,133 +1,193 @@
 <template>
   <div class="visit-list">
-    <el-form :inline="true" :model="filterData" class="screen-box" size="mini">
-      <el-form-item label="老人姓名">
-        <el-input v-model="filterData.name"></el-input>
-      </el-form-item>
-      <el-form-item label="性别">
-        <el-select v-model="filterData.sex">
-          <el-option label="女" value="女"></el-option>
-          <el-option label="男" value="男"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="所属机构">
-        <el-select v-model="filterData.mechansim">
-          <el-option label="机构1" value="机构1"></el-option>
-          <el-option label="机构2" value="机构2"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="入住状态">
-        <el-select v-model="filterData.status">
-          <el-option label="入住" value="入住"></el-option>
-          <el-option label="未入住" value="未入住"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit" icon="el-icon-search"
-          >查询</el-button
-        >
-        <el-button type="danger" @click="reSet" icon="el-icon-refresh"
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>
-
+    <div class="btn-group">
+      <el-button type="primary" @click="dialogVisible = true">添加</el-button>
+    </div>
     <el-row class="testbox">
-      <el-table
-        border
-        :data="
-          (filterArray.length ? filterArray : tableData).slice(
-            (currentPage - 1) * pageSize,
-            currentPage * pageSize
-          )
-        "
-        style="width: 100%"
-      >
+      <el-table border :data="tableData" style="width: 100%">
         <el-table-column
           align="center"
-          prop="name"
-          label="来访人姓名"
-          width="150"
-        >
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="name"
+          prop="elderName"
           label="老人姓名"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="mechansim"
-          label="所属机构"
+          prop="visitName"
+          label="来访人姓名"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="paterTel"
+          prop="visitPhone"
           label="联系电话"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="bedNum"
+          prop="visitRelation"
           label="与老人关系"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="reason"
+          prop="visitReason"
           label="来访缘由"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="goOutTime"
+          prop="visitTime"
           label="来访时间"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="planTime"
+          prop="leaveTime"
           label="离开时间"
           width="150"
         >
         </el-table-column>
         <el-table-column
           align="center"
-          prop="realTime"
-          label="登记人"
-          width="150"
-        >
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="paterName"
+          prop="visitRemark"
           label="备注"
           width="150"
         >
         </el-table-column>
-        <el-table-column align="center" label="操作" width="150">
+        <el-table-column align="center" label="操作" width="300">
           <template slot-scope="scope">
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+            <el-button size="small" @click="findVisit(scope.$index, scope.row)"
               >查看</el-button
+            >
+            <el-button size="mini" @click="editVisit(scope.$index, scope.row)"
+              >编辑</el-button
             >
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
+              @click="deleteVisit(scope.$index, scope.row)"
               >删除</el-button
             >
           </template>
         </el-table-column>
       </el-table>
     </el-row>
+
+    <el-dialog title="填写来访信息" :visible.sync="dialogVisible" width="40%">
+      <el-form :label-position="'left'">
+        <el-form-item label="老人姓名">
+          <el-select v-model="elderUuid" placeholder="请选择外出的老人">
+            <el-option
+              v-for="item in elderList"
+              :key="item.elderUuid"
+              :label="item.elderName"
+              :value="item.elderUuid"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="来访人姓名">
+          <el-input v-model="visitName"></el-input>
+        </el-form-item>
+        <el-form-item label="陪同人员电话">
+          <el-input v-model="visitPhone"></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话">
+          <el-input v-model="visitRelation"></el-input>
+        </el-form-item>
+        <el-form-item label="来访缘由">
+          <el-input v-model="visitReason"></el-input>
+        </el-form-item>
+        <el-form-item label="来访时间">
+          <el-input v-model="visitTime"></el-input>
+        </el-form-item>
+        <el-form-item label="离开时间">
+          <el-input v-model="leaveTime"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="visitRemark"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addVisit">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="来访信息" :visible.sync="showQueryDialog" width="40%">
+      <el-form :label-position="'left'">
+        <el-form-item label="老人姓名">
+          <el-select
+            v-model="queryVisit.elderUuid"
+            placeholder="请选择外出的老人"
+            :disabled="isDisable"
+          >
+            <el-option
+              v-for="item in elderList"
+              :key="item.elderUuid"
+              :label="item.elderName"
+              :value="item.elderUuid"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="来访人姓名">
+          <el-input
+            v-model="queryVisit.visitName"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="陪同人员电话">
+          <el-input
+            v-model="queryVisit.visitPhone"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话">
+          <el-input
+            v-model="queryVisit.visitRelation"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="来访缘由">
+          <el-input
+            v-model="queryVisit.visitReason"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="来访时间">
+          <el-input
+            v-model="queryVisit.visitTime"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="离开时间">
+          <el-input
+            v-model="queryVisit.leaveTime"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input
+            v-model="queryVisit.visitRemark"
+            :disabled="isDisable"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showQueryDialog = false" v-show="isEdit"
+          >取 消</el-button
+        >
+        <el-button type="primary" @click="confirmVisit">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <Pagination
       :currentPage="currentPage"
@@ -141,53 +201,35 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-
+import { get, post, deleteFn } from "../tools/request";
 export default {
   name: "VisitList",
   components: { Pagination },
   data() {
     return {
-      tableData: [
-        {
-          name: "王小二", //姓名
-          mechansim: "机构1", //所属机构
-          bedNum: 2, //床位号
-          paterName: "小红", //陪同人员姓名
-          paterTel: "1348218528", //陪同人员电弧
-          goOutTime: "2021-2-1 14:00", //外出时间
-          planTime: "2021-2-1 17:00", //预计返回时间
-          realTime: "2021-2-1 17:00", //实际返回时间
-          reason: "去看儿子", //外出原因
-          isReturn: "已返回", //是否已返回
-        },
-        {
-          name: "王小虎", //姓名
-          mechansim: "机构1", //所属机构
-          bedNum: 2, //床位号
-          paterName: "小红", //陪同人员姓名
-          paterTel: "1348218528", //陪同人员电弧
-          goOutTime: "2021-2-1 14:00", //外出时间
-          planTime: "2021-2-1 17:00", //预计返回时间
-          realTime: "2021-2-1 17:00", //实际返回时间
-          reason: "去看儿子", //外出原因
-          isReturn: "已返回", //是否已返回
-        },
-      ],
+      tableData: [],
       currentPage: 1,
       pageSize: 5,
-      totalNum: 10,
-      filterData: {
-        name: "",
-        sex: "",
-        mechansim: "",
-        status: "",
-      },
-      filterArray: [],
+      totalNum: 0,
+      elderList: [],
+      dialogVisible: false,
+      showQueryDialog: false,
+      elderUuid: "",
+      visitName: "",
+      visitPhone: "",
+      visitReason: "",
+      visitRelation: "",
+      visitRemark: "",
+      visitTime: "",
+      leaveTime: "",
+      queryVisit: {},
+      isEdit: false,
+      isDisable: false,
     };
   },
   created() {
-    this.totalNum = this.tableData.length;
-    console.log(this.totalNum);
+    this.getOldManList();
+    this.getVisit();
   },
   methods: {
     changePageSize(data) {
@@ -198,175 +240,99 @@ export default {
       console.log(data);
       this.currentPage = data;
     },
-    // 查询信息提交
-    onSubmit() {
-      console.log(
-        this.tableData.filter((value) => {
-          return this.peatch(value);
-        })
-      );
-      this.filterArray = this.tableData.filter((value) => {
-        return this.peatch(value);
+
+    getOldManList() {
+      let params = {
+        pageNo: 0,
+        pageSize: 0,
+      };
+      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+        const records = res.records;
+        this.elderList = records;
       });
     },
-    reSet() {
-      this.filterArray = [];
-      this.filterData.name = "";
-      this.filterData.sex = "";
-      this.filterData.mechansim = "";
-      this.filterData.status = "";
-    },
-    peatch(value) {
-      if (
-        this.filterData.name &&
-        this.filterData.sex &&
-        this.filterData.mechansim &&
-        this.filterData.status
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.sex === this.filterData.sex &&
-          value.mechansim === this.filterData.mechansim &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex &&
-        this.filterData.mechansim &&
-        this.filterData.status === ""
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.sex === this.filterData.sex &&
-          value.mechansim === this.filterData.mechansim
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim &&
-        this.filterData.status
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.mechansim === this.filterData.mechansim &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex &&
-        this.filterData.mechansim &&
-        this.filterData.status
-      ) {
-        return (
-          value.sex === this.filterData.sex &&
-          value.mechansim === this.filterData.mechansim &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.sex === this.filterData.sex &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim &&
-        this.filterData.status
-      ) {
-        return (
-          value.mechansim === this.filterData.mechansim &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status
-      ) {
-        return (
-          value.sex === this.filterData.sex &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex &&
-        this.filterData.mechansim &&
-        this.filterData.status === ""
-      ) {
-        return (
-          this.filterData.sex === value.sex &&
-          this.filterData.mechansim === velue.mechansim
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.status === this.filterData.status
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim &&
-        this.filterData.status === ""
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.mechansim === this.filterData.mechansim
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status === ""
-      ) {
-        return (
-          value.name === this.filterData.name &&
-          value.sex === this.filterData.sex
-        );
-      } else if (
-        this.filterData.name &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status === ""
-      ) {
-        return value.name === this.filterData.name;
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status === ""
-      ) {
-        return value.sex === this.filterData.sex;
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim &&
-        this.filterData.status === ""
-      ) {
-        return value.mechansim === this.filterData.mechansim;
-      } else if (
-        this.filterData.name === "" &&
-        this.filterData.sex === "" &&
-        this.filterData.mechansim === "" &&
-        this.filterData.status
-      ) {
-        return value.status === this.filterData.status;
-      }
+
+    getVisit() {
+      let params = {
+        pageNo: this.currentPage,
+        pageSize: this.pageSize,
+      };
+      get("http://192.168.31.114:8089/wme/elderVisit", params).then((res) => {
+        const records = res.records;
+        this.tableData = records;
+        this.tableData.map((item) => {
+          this.elderList.map((items) => {
+            if (item.elderUuid === items.elderUuid) {
+              item.elderName = items.elderName;
+            }
+          });
+        });
+      });
     },
 
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.$router.push("/oldManInfo");
+    addVisit() {
+      let params = {
+        elderUuid: this.elderUuid,
+        visitName: this.visitName,
+        visitPhone: this.visitPhone,
+        visitReason: this.visitReason,
+        visitRelation: this.visitRelation,
+        visitRemark: this.visitRemark,
+        visitTime: this.visitTime,
+        leaveTime: this.leaveTime,
+      };
+      post(
+        "http://192.168.31.114:8089/wme/elderVisit/addElderVisit",
+        params
+      ).then((res) => {
+        if (res.id) {
+          this.dialogVisible = false;
+          this.getVisit();
+        }
+      });
+    },
+
+    findVisit(index, row) {
+      this.isEdit = false;
+      this.isDisable = true;
+      this.getQueryVisit(index);
+    },
+
+    getQueryVisit(index) {
+      get(
+        `http://192.168.31.114:8089/wme/elderVisit/queryById/${this.tableData[index].elderVisitUuid}`
+      ).then((res) => {
+        this.queryVisit = res;
+        this.showQueryDialog = true;
+      });
+    },
+
+    editVisit(index, row) {
+      this.getQueryVisit(index);
+      this.isEdit = true;
+      this.isDisable = false;
+    },
+    confirmVisit() {
+      this.showQueryDialog = false;
+      if (this.isEdit) {
+        post(
+          "http://192.168.31.114:8089/wme/elderVisit/editElderVisit",
+          this.queryVisit
+        ).then((res) => {
+          if (res.id) {
+            this.getVisit();
+          }
+        });
+      }
+    },
+    deleteVisit(index, row) {
+      deleteFn(
+        `http://192.168.31.114:8089/wme/elderVisit?uuid=${this.tableData[index].elderVisitUuid}`
+      ).then((res) => {
+        if (res) {
+          this.getVisit();
+        }
+      });
     },
   },
 };
@@ -375,8 +341,13 @@ export default {
 <style lang="scss" scoped>
 .visit-list {
   padding: 10px;
+  .btn-group {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
   .testbox {
-    width: 1100px;
+    width: 1200px;
     /deep/ .el-table--scrollable-x .el-table__body-wrapper {
       overflow: auto !important;
     }

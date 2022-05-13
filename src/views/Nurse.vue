@@ -1,18 +1,24 @@
 <template>
-  <div class="mechanism-box">
+  <div class="nurse-box">
     <div class="btn-group">
       <el-button type="primary" @click="dialogVisible = true">添加</el-button>
     </div>
     <el-table :data="tableData" style="width: 100%" border>
-      <el-table-column prop="agencyName" label="机构名称" width="300">
+      <el-table-column prop="doctorName" label="护理姓名" width="150">
       </el-table-column>
-      <el-table-column prop="agencyPhone" label="机构电话" width="300">
+      <el-table-column prop="doctorPhone" label="联系方式" width="200">
       </el-table-column>
-      <el-table-column prop="agencyAddress" label="机构地址" width="300">
+      <el-table-column prop="doctorCardid" label="身份证号" width="200">
+      </el-table-column>
+      <el-table-column prop="doctorSex" label="性别" width="50">
+      </el-table-column>
+      <el-table-column prop="doctorAge" label="年龄" width="150">
+      </el-table-column>
+      <el-table-column prop="agencyName" label="所在机构" width="150">
       </el-table-column>
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
-          <el-button size="small" @click="findAgency(scope.$index, scope.row)"
+          <el-button size="small" @click="findNurse(scope.$index, scope.row)"
             >查看</el-button
           >
           <el-button size="mini" @click="editAgency(scope.$index, scope.row)"
@@ -28,30 +34,34 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="填写机构信息" :visible.sync="dialogVisible" width="40%">
+    <el-dialog
+      title="填写护理人员信息"
+      :visible.sync="dialogVisible"
+      width="40%"
+    >
       <el-form :label-position="'left'">
-        <el-form-item label="机构名称">
-          <el-input v-model="agencyName"></el-input>
+        <el-form-item label="护理姓名">
+          <el-input v-model="doctorName"></el-input>
         </el-form-item>
-        <el-form-item label="机构地址">
-          <el-input v-model="agencyAddress"></el-input>
+        <el-form-item label="护理年龄">
+          <el-input v-model="doctorAge"></el-input>
         </el-form-item>
-        <el-form-item label="机构电话">
-          <el-input v-model="agencyPhone"></el-input>
+        <el-form-item label="护理联系方式">
+          <el-input v-model="doctorPhone"></el-input>
         </el-form-item>
-        <el-form-item label="机构方位">
-          <el-input v-model="agencyLocation"></el-input>
+        <el-form-item label="护理身份证号">
+          <el-input v-model="doctorCardid"></el-input>
         </el-form-item>
-        <el-form-item label="机构图片">
-          <el-input v-model="agencyPicture"></el-input>
+        <el-form-item label="护理性别">
+          <el-input v-model="doctorSex"></el-input>
         </el-form-item>
-        <el-form-item label="机构类型">
-          <el-select v-model="agencyType" placeholder="请选择机构类型">
+        <el-form-item label="护理所在机构">
+          <el-select v-model="agencyUuid" placeholder="请选择机构类型">
             <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
+              v-for="item in agencyList"
+              :key="item.id"
+              :label="item.agencyName"
+              :value="item.agencyUuid"
             >
             </el-option>
           </el-select>
@@ -59,53 +69,53 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addAgency">确 定</el-button>
+        <el-button type="primary" @click="addNurse">确 定</el-button>
       </span>
     </el-dialog>
 
-    <el-dialog title="机构信息" :visible.sync="showQueryDialog" width="40%">
+    <el-dialog title="护理人员信息" :visible.sync="showQueryDialog" width="40%">
       <el-form :label-position="'left'">
-        <el-form-item label="机构名称">
+        <el-form-item label="护理姓名">
           <el-input
-            v-model="queryAgency.agencyName"
+            v-model="queryNurse.doctorName"
             :disabled="isDisable"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构地址">
+        <el-form-item label="护理年龄">
           <el-input
-            v-model="queryAgency.agencyAddress"
+            v-model="queryNurse.doctorAge"
             :disabled="isDisable"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构电话">
+        <el-form-item label="护理联系方式">
           <el-input
-            v-model="queryAgency.agencyPhone"
+            v-model="queryNurse.doctorPhone"
             :disabled="isDisable"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构方位">
+        <el-form-item label="护理身份证号">
           <el-input
-            v-model="queryAgency.agencyLocation"
+            v-model="queryNurse.doctorCardid"
             :disabled="isDisable"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构图片">
+        <el-form-item label="护理性别">
           <el-input
-            v-model="queryAgency.agencyPicture"
+            v-model="queryNurse.doctorSex"
             :disabled="isDisable"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构类型">
+        <el-form-item label="护理所在机构">
           <el-select
-            v-model="queryAgency.agencyType"
+            v-model="queryNurse.agencyUuid"
             placeholder="请选择机构类型"
             :disabled="isDisable"
           >
             <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
+              v-for="item in agencyList"
+              :key="item.agencyUuid"
+              :label="item.agencyName"
+              :value="item.agencyUuid"
             >
             </el-option>
           </el-select>
@@ -115,7 +125,7 @@
         <el-button v-show="isEdit" @click="showQueryDialog = false"
           >取 消</el-button
         >
-        <el-button type="primary" @click="confirmAgency">确 定</el-button>
+        <el-button type="primary" @click="confirmNurse">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -133,17 +143,17 @@
 import Pagination from "../components/Pagination.vue";
 import { get, post, deleteFn } from "../tools/request";
 export default {
-  name: "Mechanism",
+  name: "Nurse",
   components: { Pagination },
   data() {
     return {
       tableData: [],
-      agencyAddress: "",
-      agencyLocation: 0,
-      agencyName: "",
-      agencyPhone: "",
-      agencyPicture: "",
-      agencyType: 1,
+      doctorAge: "",
+      doctorCardid: "",
+      doctorName: "",
+      doctorPhone: "",
+      doctorSex: "",
+      agencyUuid: "",
       currentPage: 1,
       pageSize: 5,
       totalNum: 0,
@@ -166,7 +176,8 @@ export default {
           name: "风景区",
         },
       ],
-      queryAgency: {},
+      agencyList: [],
+      queryNurse: {},
       showQueryDialog: false,
       isDisable: true,
       isEdit: false,
@@ -174,10 +185,11 @@ export default {
   },
   mounted() {
     this.getAgencyList();
+    this.getNurseList();
   },
   watch: {
     currentPage() {
-      this.getAgencyList();
+      this.getNurseList();
     },
   },
   methods: {
@@ -189,20 +201,21 @@ export default {
       console.log(data);
       this.currentPage = data;
     },
-    addAgency() {
+    addNurse() {
+      console.log("adasd", this.agencyUuid);
       let params = {
-        agencyAddress: this.agencyAddress,
-        agencyLocation: this.agencyLocation,
-        agencyName: this.agencyName,
-        agencyPhone: this.agencyPhone,
-        agencyPicture: this.agencyPicture,
-        agencyType: this.agencyType,
+        doctorAge: this.doctorAge,
+        doctorCardid: this.doctorCardid,
+        doctorName: this.doctorName,
+        doctorPhone: this.doctorPhone,
+        doctorSex: this.doctorSex,
+        agencyUuid: this.agencyUuid,
       };
-      post("http://192.168.31.114:8089/wme/agency/addAgency", params).then(
+      post("http://192.168.31.114:8089/wme/doctor/addDoctor", params).then(
         (res) => {
           if (res.id) {
             this.dialogVisible = false;
-            this.getAgencyList();
+            this.getNurseList();
           }
         }
       );
@@ -211,13 +224,33 @@ export default {
     //获取机构列表
     getAgencyList() {
       let params = {
-        pageNo: this.currentPage,
-        pageSize: this.pageSize,
+        pageNo: 0,
+        pageSize: 0,
       };
       get("http://192.168.31.114:8089/wme/agency", params).then((res) => {
         if (res.records) {
           const records = res.records;
+          this.agencyList = records;
+        }
+      });
+    },
+
+    getNurseList() {
+      let params = {
+        pageNo: this.currentPage,
+        pageSize: this.pageSize,
+      };
+      get("http://192.168.31.114:8089/wme/doctor", params).then((res) => {
+        if (res.records) {
+          const records = res.records;
           this.tableData = records;
+          this.tableData.map((item) => {
+            this.agencyList.map((items) => {
+              if (item.agencyUuid === items.agencyUuid) {
+                item.agencyName = items.agencyName;
+              }
+            });
+          });
           this.totalNum = res.total;
         }
       });
@@ -225,44 +258,43 @@ export default {
 
     deleteAgency(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/agency?uuid=${this.tableData[index].agencyUuid}`
+        `http://192.168.31.114:8089/wme/doctor?uuid=${this.tableData[index].doctorUuid}`
       ).then((res) => {
         if (res) {
-          this.getAgencyList();
+          this.getNurseList();
         }
       });
     },
 
-    findAgency(index, row) {
+    findNurse(index, row) {
       this.isEdit = false;
       this.isDisable = true;
-      this.getQueryAgency(index);
+      this.getQueryNurse(index);
     },
 
-    getQueryAgency(index) {
+    getQueryNurse(index) {
       get(
-        `http://192.168.31.114:8089/wme/agency/queryById/${this.tableData[index].agencyUuid}`
+        `http://192.168.31.114:8089/wme/doctor/queryById/${this.tableData[index].doctorUuid}`
       ).then((res) => {
-        this.queryAgency = res;
+        this.queryNurse = res;
         this.showQueryDialog = true;
       });
-      console.log("this.queryAgency", this.queryAgency);
     },
 
     editAgency(index, row) {
-      this.getQueryAgency(index);
+      this.getQueryNurse(index);
       this.isEdit = true;
       this.isDisable = false;
     },
-    confirmAgency() {
+    confirmNurse() {
       this.showQueryDialog = false;
       if (this.isEdit) {
         post(
-          "http://192.168.31.114:8089/wme/agency/editAgency",
-          this.queryAgency
+          "http://192.168.31.114:8089/wme/doctor/editDoctor",
+          this.queryNurse
         ).then((res) => {
           if (res.id) {
-            this.getAgencyList();
+            this.getNurseList();
           }
         });
       }
@@ -272,7 +304,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mechanism-box {
+.nurse-box {
   padding: 10px;
   .btn-group {
     display: flex;

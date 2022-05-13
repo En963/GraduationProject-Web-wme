@@ -4,19 +4,20 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import OutList from '../views/OutList.vue'
 import OldManList from '../views/OldManList.vue'
-import Accidentrecord from '../views/Accidentrecord.vue'
 import Complaint from '../views//Complaint.vue'
-import Doctor from '../views/Doctor.vue'
 import Fall from '../views/Fall.vue'
 import Healthy from '../views/Healthy.vue'
-import HealthyCheck from '../views/HealthyCheck.vue'
 import Mechanism from '../views/Mechanism.vue'
-import Physical from '../views/Physical.vue'
 import Position from '../views/Position.vue'
-import StayBack from '../views/StayBack.vue'
 import Volunteer from '../views/Volunteer.vue'
 import VisitList from '../views/VisitList.vue'
-import OldManInfo from '../views/OldManInfo.vue'
+import Nurse from '../views/Nurse.vue'
+import NurseDuty from '../views/NurseDuty.vue'
+import Doctor from '../views/app/Doctor.vue'
+import Older from '../views/app/Older.vue'
+import AddHealthy from '../views/app/AddHealthy.vue'
+
+
 
 
 
@@ -55,19 +56,9 @@ const routes = [
         component: OutList
       },
       {
-        path:'/accidentrecord',
-        name:'Accidentrecord',
-        component:Accidentrecord
-      },
-      {
         path:'/complaint',
         name:'Complaint',
         component:Complaint
-      },
-      {
-        path:'/doctor',
-        name:'Doctor',
-        component:Doctor
       },
       {
         path:'/fall',
@@ -80,29 +71,14 @@ const routes = [
         component:Healthy
       },
       {
-        path:'/healthyCheck',
-        name:'HealthyCheck',
-        component:HealthyCheck
-      },
-      {
         path:'/mechanism',
         name:'Mechanism',
         component:Mechanism
       },
       {
-        path:'/physical',
-        name:'Physical',
-        component:Physical
-      },
-      {
         path:'/position',
         name:'Position',
         component:Position
-      },
-      {
-        path:'/stayBack',
-        name:'StayBack',
-        component:StayBack
       },
       {
         path:'/volunteer',
@@ -115,14 +91,33 @@ const routes = [
         component:VisitList
       },
       {
-        path:'/oldManInfo',
-        name:'OldManInfo',
-        component:OldManInfo
-
-      }
+        path:'/nurse',
+        name:'Nurse',
+        component:Nurse
+      },
+      {
+        path:'/nurseDuty',
+        name:'NurseDuty',
+        component:NurseDuty
+      },
       
   ]
   },
+  {
+    path:'/doctor',
+    name:'Doctor',
+    component:Doctor
+  },
+  {
+    path:'/older',
+    name:'Older',
+    component:Older
+  },
+  {
+    path:'/addHealthy',
+    name:'AddHealthy',
+    component:AddHealthy
+  }
 
 ]
 

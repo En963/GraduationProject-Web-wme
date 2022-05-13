@@ -28,12 +28,6 @@
             <el-menu-item index="1-3" @click="goToPage('/VisitList')"
               >来访查询</el-menu-item
             >
-            <el-menu-item index="1-4" @click="goToPage('/accidentrecord')"
-              >事故记录</el-menu-item
-            >
-            <el-menu-item index="1-5" @click="goToPage('/stayBack')"
-              >退住登记</el-menu-item
-            >
             <el-menu-item index="1-6" @click="goToPage('/complaint')"
               >老人投诉</el-menu-item
             >
@@ -61,17 +55,9 @@
               <i class="el-icon-s-opportunity"></i>
               <span slot="title">健康管理</span>
             </template>
-            <el-menu-item index="4-1" @click="goToPage('/physical')"
-              >体检查询</el-menu-item
-            >
-            <el-menu-item index="4-2" @click="goToPage('/doctor')"
-              >就医查询</el-menu-item
-            >
+
             <el-menu-item index="4-3" @click="goToPage('/healthy')"
               >健康查看</el-menu-item
-            >
-            <el-menu-item index="4-4" @click="goToPage('/healthyCheck')"
-              >健康监测</el-menu-item
             >
           </el-submenu>
           <el-submenu index="5">
@@ -86,10 +72,18 @@
               >跌倒监控</el-menu-item
             >
           </el-submenu>
-          <el-menu-item index="/communication">
-            <i class="el-icon-phone-outline"></i>
-            <span slot="title">通信管理</span>
-          </el-menu-item>
+          <el-submenu index="6">
+            <template slot="title">
+              <i class="el-icon-s-custom"></i>
+              <span>护理人员管理</span>
+            </template>
+            <el-menu-item index="6-1" @click="goToPage('/nurse')"
+              >护理人员信息维护</el-menu-item
+            >
+            <el-menu-item index="6-1" @click="goToPage('/nurseDuty')"
+              >护理人员排班</el-menu-item
+            >
+          </el-submenu>
         </el-menu>
       </div>
       <div class="home-list" v-show="showList">
@@ -115,6 +109,7 @@
 
 
 <script>
+import { get } from "../tools/request";
 export default {
   name: "Home",
   data() {
@@ -143,6 +138,7 @@ export default {
     };
   },
   mounted() {
+    this.findOld();
     if (window.location.hash === "#/home") {
       this.showList = true;
     } else {
@@ -195,6 +191,14 @@ export default {
       } else {
         return;
       }
+    },
+    findOld() {
+      const uuid = "20220512171303011274387162093938";
+      get(`http://192.168.31.114:8089/wme/elder/queryById/${uuid}`).then(
+        (res) => {
+          console.log("rerere", res);
+        }
+      );
     },
   },
 };
