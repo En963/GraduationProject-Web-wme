@@ -43,7 +43,16 @@
           <el-input v-model="agencyLocation"></el-input>
         </el-form-item>
         <el-form-item label="机构图片">
-          <el-input v-model="agencyPicture"></el-input>
+          <input
+            v-if="agencyPicture === ''"
+            type="file"
+            accept="image/*"
+            @change="getImg"
+          />
+          <div class="picture-box" v-else>
+            <img :src="agencyPicture" alt="" />
+            <el-button @click="agencyPicture = ''">替换</el-button>
+          </div>
         </el-form-item>
         <el-form-item label="机构类型">
           <el-select v-model="agencyType" placeholder="请选择机构类型">
@@ -90,10 +99,20 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="机构图片">
-          <el-input
-            v-model="queryAgency.agencyPicture"
-            :disabled="isDisable"
-          ></el-input>
+          <input
+            v-if="queryAgency.agencyPicture === ''"
+            type="file"
+            accept="image/*"
+            @change="getImg"
+          />
+          <div class="picture-box" v-else>
+            <img :src="queryAgency.agencyPicture" alt="" />
+            <el-button
+              @click="queryAgency.agencyPicture = ''"
+              :disabled="isDisable"
+              >替换</el-button
+            >
+          </div>
         </el-form-item>
         <el-form-item label="机构类型">
           <el-select
@@ -262,6 +281,43 @@ export default {
         });
       }
     },
+    getImg(e) {
+      var file = e.target.files;
+      console.log(file);
+      let fileReader = new FileReader();
+      fileReader.readAsDataURL(file[0]);
+      fileReader.onload = (res) => {
+        const imgTemp = this.base64ImgtoFile(res.target.result);
+        console.log(
+          window.webkitURL.createObjectURL(imgTemp) ||
+            window.URL.createObjectURL(imgTemp)
+        );
+        if (this.isEdit) {
+          this.queryAgency.agencyPicture =
+            window.webkitURL.createObjectURL(imgTemp) ||
+            window.URL.createObjectURL(imgTemp);
+        } else {
+          this.agencyPicture =
+            window.webkitURL.createObjectURL(imgTemp) ||
+            window.URL.createObjectURL(imgTemp);
+        }
+      };
+    },
+
+    base64ImgtoFile(dataurl, filename = "file") {
+      const arr = dataurl.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const suffix = mime.split("/")[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], `${filename}.${suffix}`, {
+        type: mime,
+      });
+    },
   },
 };
 </script>
@@ -273,6 +329,14 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
+  }
+  .picture-box {
+    display: flex;
+    align-items: center;
+    img {
+      width: 200px;
+      margin-right: 20px;
+    }
   }
 }
 </style>

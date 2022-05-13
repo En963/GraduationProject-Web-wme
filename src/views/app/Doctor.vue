@@ -51,7 +51,7 @@
         <div>
           <i class="el-icon-warning">跌倒警告</i>
         </div>
-        <div class="remind-btn">确认</div>
+        <div class="remind-btn" @click="confirmWarn">确认</div>
       </div>
       <div class="add-tab" v-show="chooseNum === 4">
         <div class="select-box">
@@ -437,6 +437,13 @@ export default {
           }
         }
       );
+    },
+
+    confirmWarn() {
+      this.$message({
+        message: "已确认",
+        type: "success",
+      });
     },
   },
 };

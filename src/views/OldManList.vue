@@ -34,7 +34,7 @@
       </el-table-column>
       <el-table-column
         align="center"
-        prop="elderType"
+        prop="elderTypeName"
         label="老人类型"
         width="150"
       >
@@ -227,7 +227,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn,host } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "OldManList",
   components: { Pagination },
@@ -295,6 +295,13 @@ export default {
       get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.tableData = records;
+        this.tableData.map((item) => {
+          if (item.elderType === "0") {
+            item.elderTypeName = "社区";
+          } else if (item.elderType === "1") {
+            item.elderTypeName = "机构";
+          }
+        });
         this.totalNum = res.total;
       });
     },
@@ -315,25 +322,23 @@ export default {
         elderPopulation: this.elderPopulation,
         elderType: this.elderType,
       };
-      post(`${host}/wme/elder/addElder`, params).then(
-        (res) => {
-          if (res.id) {
-            if (this.elderType === 1) {
-              const elderUuid = res.elderUuid;
-              let params = {
-                elderUuid: elderUuid,
-                agencyUuid: this.agencyUuid,
-              };
-              post(
-                `${host}/wme/elderAgencyRelation/addElderAgencyRelation`,
-                params
-              ).then((res) => {});
-            }
-            this.dialogVisible = false;
-            this.getOldManList();
+      post(`${host}/wme/elder/addElder`, params).then((res) => {
+        if (res.id) {
+          if (this.elderType === 1) {
+            const elderUuid = res.elderUuid;
+            let params = {
+              elderUuid: elderUuid,
+              agencyUuid: this.agencyUuid,
+            };
+            post(
+              `${host}/wme/elderAgencyRelation/addElderAgencyRelation`,
+              params
+            ).then((res) => {});
           }
+          this.dialogVisible = false;
+          this.getOldManList();
         }
-      );
+      });
     },
 
     getQueryElder(index) {
@@ -344,9 +349,7 @@ export default {
         if (res.elderType === "1") {
           get(
             `${host}/wme/elderAgencyRelation/queryByElderId/${this.tableData[index].elderUuid}`
-          ).then((res) => {
-            console.log("ralation", res);
-          });
+          ).then((res) => {});
         }
         this.showQueryDialog = true;
       });
@@ -361,10 +364,7 @@ export default {
       this.showQueryDialog = false;
       if (this.isEdit) {
         this.queryElder.elderType = parseInt(this.queryElder.elderType);
-        post(
-          `${host}/wme/elder/editElder`,
-          this.queryElder
-        ).then((res) => {
+        post(`${host}/wme/elder/editElder`, this.queryElder).then((res) => {
           if (res.id) {
             if (this.queryElder.elderType === 1) {
               const elderUuid = res.elderUuid;
