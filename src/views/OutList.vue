@@ -201,7 +201,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "OutList",
   components: { Pagination },
@@ -246,7 +246,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+      get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.elderList = records;
       });
@@ -257,7 +257,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/elderGoout", params).then((res) => {
+      get(`${host}/wme/elderGoout`, params).then((res) => {
         const records = res.records;
         this.tableData = records;
         this.tableData.map((item) => {
@@ -281,10 +281,7 @@ export default {
         gooutReason: this.gooutReason,
         goinFlag: this.goinFlag,
       };
-      post(
-        "http://192.168.31.114:8089/wme/elderGoout/addElderGoout",
-        params
-      ).then((res) => {
+      post(`${host}/wme/elderGoout/addElderGoout`, params).then((res) => {
         if (res.id) {
           this.dialogVisible = false;
           this.getOut();
@@ -300,7 +297,7 @@ export default {
 
     getQueryOut(index) {
       get(
-        `http://192.168.31.114:8089/wme/elderGoout/queryById/${this.tableData[index].elderGooutUuid}`
+        `${host}/wme/elderGoout/queryById/${this.tableData[index].elderGooutUuid}`
       ).then((res) => {
         this.queryOut = res;
         this.showQueryDialog = true;
@@ -315,19 +312,18 @@ export default {
     confirmOut() {
       this.showQueryDialog = false;
       if (this.isEdit) {
-        post(
-          "http://192.168.31.114:8089/wme/elderGoout/editElderGoout",
-          this.queryOut
-        ).then((res) => {
-          if (res.id) {
-            this.getOut();
+        post(`${host}/wme/elderGoout/editElderGoout`, this.queryOut).then(
+          (res) => {
+            if (res.id) {
+              this.getOut();
+            }
           }
-        });
+        );
       }
     },
     deleteOut(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/elderGoout?uuid=${this.tableData[index].elderGooutUuid}`
+        `${host}/wme/elderGoout?uuid=${this.tableData[index].elderGooutUuid}`
       ).then((res) => {
         if (res) {
           this.getOut();

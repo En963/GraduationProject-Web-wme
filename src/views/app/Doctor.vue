@@ -166,7 +166,7 @@
 
 <script>
 import Map from "../../components/Map.vue";
-import { get, post, deleteFn } from "../../tools/request";
+import { get, post, deleteFn, host } from "../../tools/request";
 
 export default {
   name: "Doctor",
@@ -252,7 +252,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+      get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.elderList = records;
       });
@@ -266,64 +266,62 @@ export default {
           elderUuid: this.elderUuid,
           medicineUuid: this.medicineUuid,
         };
-        post(
-          "http://192.168.31.114:8089/wme/elderMedicine/editElderMedicine",
-          params
-        ).then((res) => {
-          if (res) {
-            this.$message({
-              message: "修改成功",
-              type: "success",
-            });
+        post(`${host}/wme/elderMedicine/editElderMedicine`, params).then(
+          (res) => {
+            if (res) {
+              this.$message({
+                message: "修改成功",
+                type: "success",
+              });
+            }
           }
-        });
+        );
       } else {
         let params = {
           congifure: this.congifure,
           doctorUuid: this.$route.query.doctorUuid,
           elderUuid: this.elderUuid,
         };
-        post(
-          "http://192.168.31.114:8089/wme/elderMedicine/addElderMedicine",
-          params
-        ).then((res) => {
-          if (res) {
-            this.$message({
-              message: "提醒成功",
-              type: "success",
-            });
+        post(`${host}/wme/elderMedicine/addElderMedicine`, params).then(
+          (res) => {
+            if (res) {
+              this.$message({
+                message: "提醒成功",
+                type: "success",
+              });
+            }
           }
-        });
+        );
       }
     },
 
     getMedicine() {
-      get(
-        `http://192.168.31.114:8089/wme/elderMedicine/queryByElderId/${this.elderUuid}`
-      ).then((res) => {
-        if (res) {
-          this.congifure = res.congifure;
-          this.medicineUuid = res.medicineUuid;
-          this.isEdit = true;
-        } else {
-          this.isEdit = false;
-          this.congifure = "";
+      get(`${host}/wme/elderMedicine/queryByElderId/${this.elderUuid}`).then(
+        (res) => {
+          if (res) {
+            this.congifure = res.congifure;
+            this.medicineUuid = res.medicineUuid;
+            this.isEdit = true;
+          } else {
+            this.isEdit = false;
+            this.congifure = "";
+          }
         }
-      });
+      );
     },
 
     getPosition() {
-      get(
-        `http://192.168.31.114:8089/wme/elderPosition/queryById/${this.mapElderUuid}`
-      ).then((res) => {
-        if (res) {
-          this.longitude = res.longitude;
-          this.latitude = res.latitude;
-        } else {
-          this.longitude = "";
-          this.latitude = "";
+      get(`${host}/wme/elderPosition/queryById/${this.mapElderUuid}`).then(
+        (res) => {
+          if (res) {
+            this.longitude = res.longitude;
+            this.latitude = res.latitude;
+          } else {
+            this.longitude = "";
+            this.latitude = "";
+          }
         }
-      });
+      );
     },
 
     addHealty() {
@@ -351,10 +349,7 @@ export default {
           healthWeight: this.healthWeight,
           elderHealthUuid: this.elderHealthUuid,
         };
-        post(
-          "http://192.168.31.114:8089/wme/elderHealth/editElderHealth",
-          params
-        ).then((res) => {
+        post(`${host}/wme/elderHealth/editElderHealth`, params).then((res) => {
           if (res) {
             this.$message({
               message: "修改成功",
@@ -384,10 +379,7 @@ export default {
           healthVision: this.healthVision,
           healthWeight: this.healthWeight,
         };
-        post(
-          "http://192.168.31.114:8089/wme/elderHealth/addElderHealth",
-          params
-        ).then((res) => {
+        post(`${host}/wme/elderHealth/addElderHealth`, params).then((res) => {
           if (res) {
             this.$message({
               message: "添加成功",
@@ -399,52 +391,52 @@ export default {
     },
 
     getHealth() {
-      get(
-        `http://192.168.31.114:8089/wme/elderHealth/queryByElderId/${this.addElderUuid}`
-      ).then((res) => {
-        if (res) {
-          (this.healthBloodoxygen = res.healthBloodoxygen),
-            (this.healthBloodpressure = res.healthBloodpressure),
-            (this.healthBloodsugar = res.healthBloodsugar),
-            (this.healthBodyfat = res.healthBodyfat),
-            (this.healthBonedensity = res.healthBonedensity),
-            (this.healthBonemass = res.healthBonemass),
-            (this.healthFat = res.healthFat),
-            (this.healthHear = res.healthHear),
-            (this.healthHeartrate = res.healthHeartrate),
-            (this.healthHeight = res.healthHeight),
-            (this.healthLungfunction = res.healthLungfunction),
-            (this.healthMoisture = res.healthMoisture),
-            (this.healthMuscle = res.healthMuscle),
-            (this.healthSleep = res.healthSleep),
-            (this.healthUricacid = res.healthUricacid),
-            (this.healthVisceralfat = res.healthVisceralfat),
-            (this.healthVision = res.healthVision),
-            (this.healthWeight = res.healthWeight),
-            (this.elderHealthUuid = res.elderHealthUuid);
-          this.isHealthyEdit = true;
-        } else {
-          this.isHealthyEdit = false;
-          this.healthBloodoxygen = "";
-          this.healthBloodpressure = "";
-          this.healthBloodsugar = "";
-          this.healthBodyfat = "";
-          this.healthBonedensity = "";
-          this.healthBonemass = "";
-          this.healthFat = "";
-          this.healthHear = "";
-          this.healthHeartrate = "";
-          this.healthHeight = "";
-          this.healthLungfunction = "";
-          this.healthMoisture = "";
-          this.healthMuscle = "";
-          this.healthSleep = "";
-          this.healthUricacid = "";
-          this.healthVisceralfat = "";
-          this.healthVision = "";
-          this.healthWeight = "";
+      get(`${host}/wme/elderHealth/queryByElderId/${this.addElderUuid}`).then(
+        (res) => {
+          if (res) {
+            (this.healthBloodoxygen = res.healthBloodoxygen),
+              (this.healthBloodpressure = res.healthBloodpressure),
+              (this.healthBloodsugar = res.healthBloodsugar),
+              (this.healthBodyfat = res.healthBodyfat),
+              (this.healthBonedensity = res.healthBonedensity),
+              (this.healthBonemass = res.healthBonemass),
+              (this.healthFat = res.healthFat),
+              (this.healthHear = res.healthHear),
+              (this.healthHeartrate = res.healthHeartrate),
+              (this.healthHeight = res.healthHeight),
+              (this.healthLungfunction = res.healthLungfunction),
+              (this.healthMoisture = res.healthMoisture),
+              (this.healthMuscle = res.healthMuscle),
+              (this.healthSleep = res.healthSleep),
+              (this.healthUricacid = res.healthUricacid),
+              (this.healthVisceralfat = res.healthVisceralfat),
+              (this.healthVision = res.healthVision),
+              (this.healthWeight = res.healthWeight),
+              (this.elderHealthUuid = res.elderHealthUuid);
+            this.isHealthyEdit = true;
+          } else {
+            this.isHealthyEdit = false;
+            this.healthBloodoxygen = "";
+            this.healthBloodpressure = "";
+            this.healthBloodsugar = "";
+            this.healthBodyfat = "";
+            this.healthBonedensity = "";
+            this.healthBonemass = "";
+            this.healthFat = "";
+            this.healthHear = "";
+            this.healthHeartrate = "";
+            this.healthHeight = "";
+            this.healthLungfunction = "";
+            this.healthMoisture = "";
+            this.healthMuscle = "";
+            this.healthSleep = "";
+            this.healthUricacid = "";
+            this.healthVisceralfat = "";
+            this.healthVision = "";
+            this.healthWeight = "";
+          }
         }
-      });
+      );
     },
   },
 };

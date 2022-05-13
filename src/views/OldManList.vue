@@ -227,7 +227,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn,host } from "../tools/request";
 export default {
   name: "OldManList",
   components: { Pagination },
@@ -280,7 +280,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/agency", params).then((res) => {
+      get(`${host}/wme/agency`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.agencyList = records;
@@ -292,7 +292,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+      get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.tableData = records;
         this.totalNum = res.total;
@@ -315,7 +315,7 @@ export default {
         elderPopulation: this.elderPopulation,
         elderType: this.elderType,
       };
-      post("http://192.168.31.114:8089/wme/elder/addElder", params).then(
+      post(`${host}/wme/elder/addElder`, params).then(
         (res) => {
           if (res.id) {
             if (this.elderType === 1) {
@@ -325,7 +325,7 @@ export default {
                 agencyUuid: this.agencyUuid,
               };
               post(
-                "http://192.168.31.114:8089/wme/elderAgencyRelation/addElderAgencyRelation",
+                `${host}/wme/elderAgencyRelation/addElderAgencyRelation`,
                 params
               ).then((res) => {});
             }
@@ -338,12 +338,12 @@ export default {
 
     getQueryElder(index) {
       get(
-        `http://192.168.31.114:8089/wme/elder/queryById/${this.tableData[index].elderUuid}`
+        `${host}/wme/elder/queryById/${this.tableData[index].elderUuid}`
       ).then((res) => {
         this.queryElder = res;
         if (res.elderType === "1") {
           get(
-            `http://192.168.31.114:8089/wme/elderAgencyRelation/queryByElderId/${this.tableData[index].elderUuid}`
+            `${host}/wme/elderAgencyRelation/queryByElderId/${this.tableData[index].elderUuid}`
           ).then((res) => {
             console.log("ralation", res);
           });
@@ -362,7 +362,7 @@ export default {
       if (this.isEdit) {
         this.queryElder.elderType = parseInt(this.queryElder.elderType);
         post(
-          "http://192.168.31.114:8089/wme/elder/editElder",
+          `${host}/wme/elder/editElder`,
           this.queryElder
         ).then((res) => {
           if (res.id) {
@@ -373,7 +373,7 @@ export default {
                 agencyUuid: this.agencyUuid,
               };
               post(
-                "http://192.168.31.114:8089/wme/elderAgencyRelation/addElderAgencyRelation",
+                `${host}/wme/elderAgencyRelation/addElderAgencyRelation`,
                 params
               ).then((res) => {});
             }
@@ -389,7 +389,7 @@ export default {
     },
     deleteElder(index) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/elder?uuid=${this.tableData[index].elderUuid}`
+        `${host}/wme/elder?uuid=${this.tableData[index].elderUuid}`
       ).then((res) => {
         if (res) {
           this.getOldManList();

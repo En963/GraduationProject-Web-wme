@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { get, post } from "../tools/request";
+import { get, post,host } from "../tools/request";
 export default {
   name: "Login",
   data() {
@@ -131,7 +131,7 @@ export default {
           phone: this.userName,
           password: this.password,
         };
-        get("http://192.168.31.114:8089/wme/main/login", params).then((res) => {
+        get(`${host}/wme/main/login`, params).then((res) => {
           console.log(res);
           if (res.code === "0") {
             this.showTips = false;
@@ -175,7 +175,7 @@ export default {
         let params = {
           phone: this.registerName,
         };
-        get("http://192.168.31.114:8089/wme/main/dysms", params).then((res) => {
+        get(`${host}/wme/main/dysms`, params).then((res) => {
           console.log(res);
         });
       }
@@ -198,7 +198,7 @@ export default {
           password: this.registerWord,
           type: this.type,
         };
-        get("http://192.168.31.114:8089/wme/main/register", params).then(
+        get(`${host}/wme/main/register`, params).then(
           (res) => {
             if (res === true) {
               this.loginStatus = true;

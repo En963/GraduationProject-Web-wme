@@ -201,7 +201,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "VisitList",
   components: { Pagination },
@@ -246,7 +246,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+      get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.elderList = records;
       });
@@ -257,7 +257,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/elderVisit", params).then((res) => {
+      get(`${host}/wme/elderVisit`, params).then((res) => {
         const records = res.records;
         this.tableData = records;
         this.tableData.map((item) => {
@@ -281,10 +281,7 @@ export default {
         visitTime: this.visitTime,
         leaveTime: this.leaveTime,
       };
-      post(
-        "http://192.168.31.114:8089/wme/elderVisit/addElderVisit",
-        params
-      ).then((res) => {
+      post(`${host}/wme/elderVisit/addElderVisit`, params).then((res) => {
         if (res.id) {
           this.dialogVisible = false;
           this.getVisit();
@@ -300,7 +297,7 @@ export default {
 
     getQueryVisit(index) {
       get(
-        `http://192.168.31.114:8089/wme/elderVisit/queryById/${this.tableData[index].elderVisitUuid}`
+        `${host}/wme/elderVisit/queryById/${this.tableData[index].elderVisitUuid}`
       ).then((res) => {
         this.queryVisit = res;
         this.showQueryDialog = true;
@@ -315,19 +312,18 @@ export default {
     confirmVisit() {
       this.showQueryDialog = false;
       if (this.isEdit) {
-        post(
-          "http://192.168.31.114:8089/wme/elderVisit/editElderVisit",
-          this.queryVisit
-        ).then((res) => {
-          if (res.id) {
-            this.getVisit();
+        post(`${host}/wme/elderVisit/editElderVisit`, this.queryVisit).then(
+          (res) => {
+            if (res.id) {
+              this.getVisit();
+            }
           }
-        });
+        );
       }
     },
     deleteVisit(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/elderVisit?uuid=${this.tableData[index].elderVisitUuid}`
+        `${host}/wme/elderVisit?uuid=${this.tableData[index].elderVisitUuid}`
       ).then((res) => {
         if (res) {
           this.getVisit();

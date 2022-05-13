@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { get } from "../tools/request";
+import { get,host } from "../tools/request";
 export default {
   name: "Healthy",
   data() {
@@ -130,7 +130,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/elder", params).then((res) => {
+      get(`${host}/wme/elder`, params).then((res) => {
         const records = res.records;
         this.elderList = records;
       });
@@ -141,7 +141,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/elderHealth", params).then((res) => {
+      get(`${host}/wme/elderHealth`, params).then((res) => {
         if (res) {
           const records = res.records;
           this.tableData = records;
@@ -158,7 +158,7 @@ export default {
     findHealthy(index, row) {
       this.dialogVisible = true;
       get(
-        `http://192.168.31.114:8089/wme/elderHealth/queryById/${this.tableData[index].elderHealthUuid}`
+        `${host}/wme/elderHealth/queryById/${this.tableData[index].elderHealthUuid}`
       ).then((res) => {
         this.queryHealthy = res;
         this.queryHealthy.elderName = this.tableData[index].name;

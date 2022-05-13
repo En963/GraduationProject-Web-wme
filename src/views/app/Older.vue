@@ -64,7 +64,7 @@
 
 <script>
 import Map from "../../components/Map.vue";
-import { get, post, deleteFn } from "../../tools/request";
+import { get, post, deleteFn, host } from "../../tools/request";
 export default {
   name: "Older",
   components: { Map },
@@ -113,7 +113,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/doctor", params).then((res) => {
+      get(`${host}/wme/doctor`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.nurseList = records;
@@ -129,17 +129,16 @@ export default {
         elderUuid: this.$route.query.elderUuid,
         handleFlag: this.handleFlag,
       };
-      post(
-        "http://192.168.31.114:8089/wme/elderComplaint/addElderComplaint",
-        params
-      ).then((res) => {
-        if (res) {
-          this.$message({
-            message: "投诉成功",
-            type: "success",
-          });
+      post(`${host}/wme/elderComplaint/addElderComplaint`, params).then(
+        (res) => {
+          if (res) {
+            this.$message({
+              message: "投诉成功",
+              type: "success",
+            });
+          }
         }
-      });
+      );
     },
 
     getDoctorSchedule() {
@@ -147,27 +146,25 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/doctorSchedule", params).then(
-        (res) => {
-          if (res.records) {
-            const records = res.records;
-            this.tableData = records;
-            this.tableData.map((item) => {
-              this.nurseList.map((items) => {
-                if (item.doctorUuid === items.doctorUuid) {
-                  item.doctorName = items.doctorName;
-                }
-              });
+      get(`${host}/wme/doctorSchedule`, params).then((res) => {
+        if (res.records) {
+          const records = res.records;
+          this.tableData = records;
+          this.tableData.map((item) => {
+            this.nurseList.map((items) => {
+              if (item.doctorUuid === items.doctorUuid) {
+                item.doctorName = items.doctorName;
+              }
             });
-            this.totalNum = res.total;
-          }
+          });
+          this.totalNum = res.total;
         }
-      );
+      });
     },
 
     getMedicine() {
       get(
-        `http://192.168.31.114:8089/wme/elderMedicine/queryByElderId/${this.$route.query.elderUuid}`
+        `${host}/wme/elderMedicine/queryByElderId/${this.$route.query.elderUuid}`
       ).then((res) => {
         this.congifure = res.congifure;
       });

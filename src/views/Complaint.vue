@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "Complaint",
   data() {
@@ -33,7 +33,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/doctor", params).then((res) => {
+      get(`${host}/wme/doctor`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.nurseList = records;
@@ -45,21 +45,19 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/elderComplaint", params).then(
-        (res) => {
-          if (res) {
-            const records = res.records;
-            this.tableData = records;
-            this.tableData.map((item) => {
-              this.nurseList.map((items) => {
-                if (item.agencyUuid === items.doctorUuid) {
-                  item.doctorName = items.doctorName;
-                }
-              });
+      get(`${host}/wme/elderComplaint`, params).then((res) => {
+        if (res) {
+          const records = res.records;
+          this.tableData = records;
+          this.tableData.map((item) => {
+            this.nurseList.map((items) => {
+              if (item.agencyUuid === items.doctorUuid) {
+                item.doctorName = items.doctorName;
+              }
             });
-          }
+          });
         }
-      );
+      });
     },
   },
 };

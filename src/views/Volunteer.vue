@@ -122,7 +122,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "Volunteer",
   components: { Pagination },
@@ -189,10 +189,7 @@ export default {
         volunteerPhone: this.volunteerPhone,
         volunteerDescribe: this.volunteerDescribe,
       };
-      post(
-        "http://192.168.31.114:8089/wme/volunteer/addVolunteer",
-        params
-      ).then((res) => {
+      post(`${host}/wme/volunteer/addVolunteer`, params).then((res) => {
         if (res.id) {
           this.dialogVisible = false;
           this.getVolunteerList();
@@ -206,7 +203,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/volunteer", params).then((res) => {
+      get(`${host}/wme/volunteer`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.tableData = records;
@@ -217,7 +214,7 @@ export default {
 
     deleteVolunteer(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/volunteer?uuid=${this.tableData[index].volunteerUuid}`
+        `${host}/wme/volunteer?uuid=${this.tableData[index].volunteerUuid}`
       ).then((res) => {
         if (res) {
           this.getVolunteerList();
@@ -233,7 +230,7 @@ export default {
 
     getQueryVolunteer(index) {
       get(
-        `http://192.168.31.114:8089/wme/volunteer/queryById/${this.tableData[index].volunteerUuid}`
+        `${host}/wme/volunteer/queryById/${this.tableData[index].volunteerUuid}`
       ).then((res) => {
         this.queryVolunteer = res;
         this.showQueryDialog = true;
@@ -249,14 +246,13 @@ export default {
     confirmVolunteer() {
       this.showQueryDialog = false;
       if (this.isEdit) {
-        post(
-          "http://192.168.31.114:8089/wme/volunteer/editVolunteer",
-          this.queryVolunteer
-        ).then((res) => {
-          if (res.id) {
-            this.getVolunteerList();
+        post(`${host}/wme/volunteer/editVolunteer`, this.queryVolunteer).then(
+          (res) => {
+            if (res.id) {
+              this.getVolunteerList();
+            }
           }
-        });
+        );
       }
     },
   },

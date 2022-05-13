@@ -33,3 +33,5 @@ export function get(outerUrl, params) {
       })
       .catch(err => Promise.reject(err));
   }
+
+  export const host = 'http://192.168.31.114:8089'

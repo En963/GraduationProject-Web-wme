@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "NurseDuty",
   data() {
@@ -158,7 +158,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/doctor", params).then((res) => {
+      get(`${host}/wme/doctor`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.nurseList = records;
@@ -171,15 +171,14 @@ export default {
         doctorUuid: this.doctorUuid,
         schedule: this.schedule,
       };
-      post(
-        "http://192.168.31.114:8089/wme/doctorSchedule/addDoctorSchedule",
-        params
-      ).then((res) => {
-        if (res.id) {
-          this.dialogVisible = false;
-          this.getDoctorSchedule();
+      post(`${host}/wme/doctorSchedule/addDoctorSchedule`, params).then(
+        (res) => {
+          if (res.id) {
+            this.dialogVisible = false;
+            this.getDoctorSchedule();
+          }
         }
-      });
+      );
     },
 
     getDoctorSchedule() {
@@ -187,22 +186,20 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/doctorSchedule", params).then(
-        (res) => {
-          if (res.records) {
-            const records = res.records;
-            this.tableData = records;
-            this.tableData.map((item) => {
-              this.nurseList.map((items) => {
-                if (item.doctorUuid === items.doctorUuid) {
-                  item.doctorName = items.doctorName;
-                }
-              });
+      get(`${host}/wme/doctorSchedule`, params).then((res) => {
+        if (res.records) {
+          const records = res.records;
+          this.tableData = records;
+          this.tableData.map((item) => {
+            this.nurseList.map((items) => {
+              if (item.doctorUuid === items.doctorUuid) {
+                item.doctorName = items.doctorName;
+              }
             });
-            this.totalNum = res.total;
-          }
+          });
+          this.totalNum = res.total;
         }
-      );
+      });
     },
 
     findSchedule(index, row) {
@@ -213,7 +210,7 @@ export default {
 
     getQuerySchedule(index) {
       get(
-        `http://192.168.31.114:8089/wme/doctorSchedule/queryById/${this.tableData[index].doctorUuid}`
+        `${host}/wme/doctorSchedule/queryById/${this.tableData[index].doctorUuid}`
       ).then((res) => {
         this.querySchedule = res;
         this.showQueryDialog = true;
@@ -228,7 +225,7 @@ export default {
       this.showQueryDialog = false;
       if (this.isEdit) {
         post(
-          "http://192.168.31.114:8089/wme/doctorSchedule/editDoctorSchedule",
+          `${host}/wme/doctorSchedule/editDoctorSchedule`,
           this.queryNurse
         ).then((res) => {
           if (res.id) {
@@ -239,7 +236,7 @@ export default {
     },
     deleteSchedule(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/doctorSchedule?uuid=${this.tableData[index].doctorUuid}`
+        `${host}/wme/doctorSchedule?uuid=${this.tableData[index].doctorUuid}`
       ).then((res) => {
         if (res) {
           this.getDoctorSchedule();

@@ -131,7 +131,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn, host } from "../tools/request";
 export default {
   name: "Mechanism",
   components: { Pagination },
@@ -198,14 +198,12 @@ export default {
         agencyPicture: this.agencyPicture,
         agencyType: this.agencyType,
       };
-      post("http://192.168.31.114:8089/wme/agency/addAgency", params).then(
-        (res) => {
-          if (res.id) {
-            this.dialogVisible = false;
-            this.getAgencyList();
-          }
+      post(`${host}/wme/agency/addAgency`, params).then((res) => {
+        if (res.id) {
+          this.dialogVisible = false;
+          this.getAgencyList();
         }
-      );
+      });
     },
 
     //获取机构列表
@@ -214,7 +212,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/agency", params).then((res) => {
+      get(`${host}/wme/agency`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.tableData = records;
@@ -225,7 +223,7 @@ export default {
 
     deleteAgency(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/agency?uuid=${this.tableData[index].agencyUuid}`
+        `${host}/wme/agency?uuid=${this.tableData[index].agencyUuid}`
       ).then((res) => {
         if (res) {
           this.getAgencyList();
@@ -241,7 +239,7 @@ export default {
 
     getQueryAgency(index) {
       get(
-        `http://192.168.31.114:8089/wme/agency/queryById/${this.tableData[index].agencyUuid}`
+        `${host}/wme/agency/queryById/${this.tableData[index].agencyUuid}`
       ).then((res) => {
         this.queryAgency = res;
         this.showQueryDialog = true;
@@ -257,10 +255,7 @@ export default {
     confirmAgency() {
       this.showQueryDialog = false;
       if (this.isEdit) {
-        post(
-          "http://192.168.31.114:8089/wme/agency/editAgency",
-          this.queryAgency
-        ).then((res) => {
+        post(`${host}/wme/agency/editAgency`, this.queryAgency).then((res) => {
           if (res.id) {
             this.getAgencyList();
           }

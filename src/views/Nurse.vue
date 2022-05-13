@@ -141,7 +141,7 @@
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import { get, post, deleteFn } from "../tools/request";
+import { get, post, deleteFn,host } from "../tools/request";
 export default {
   name: "Nurse",
   components: { Pagination },
@@ -211,7 +211,7 @@ export default {
         doctorSex: this.doctorSex,
         agencyUuid: this.agencyUuid,
       };
-      post("http://192.168.31.114:8089/wme/doctor/addDoctor", params).then(
+      post(`${host}/wme/doctor/addDoctor`, params).then(
         (res) => {
           if (res.id) {
             this.dialogVisible = false;
@@ -227,7 +227,7 @@ export default {
         pageNo: 0,
         pageSize: 0,
       };
-      get("http://192.168.31.114:8089/wme/agency", params).then((res) => {
+      get(`${host}/wme/agency`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.agencyList = records;
@@ -240,7 +240,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: this.pageSize,
       };
-      get("http://192.168.31.114:8089/wme/doctor", params).then((res) => {
+      get(`${host}/wme/doctor`, params).then((res) => {
         if (res.records) {
           const records = res.records;
           this.tableData = records;
@@ -258,7 +258,7 @@ export default {
 
     deleteAgency(index, row) {
       deleteFn(
-        `http://192.168.31.114:8089/wme/doctor?uuid=${this.tableData[index].doctorUuid}`
+        `${host}/wme/doctor?uuid=${this.tableData[index].doctorUuid}`
       ).then((res) => {
         if (res) {
           this.getNurseList();
@@ -274,7 +274,7 @@ export default {
 
     getQueryNurse(index) {
       get(
-        `http://192.168.31.114:8089/wme/doctor/queryById/${this.tableData[index].doctorUuid}`
+        `${host}/wme/doctor/queryById/${this.tableData[index].doctorUuid}`
       ).then((res) => {
         this.queryNurse = res;
         this.showQueryDialog = true;
@@ -290,7 +290,7 @@ export default {
       this.showQueryDialog = false;
       if (this.isEdit) {
         post(
-          "http://192.168.31.114:8089/wme/doctor/editDoctor",
+          "${host}/wme/doctor/editDoctor",
           this.queryNurse
         ).then((res) => {
           if (res.id) {

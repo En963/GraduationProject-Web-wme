@@ -109,7 +109,7 @@
 
 
 <script>
-import { get } from "../tools/request";
+import { get,host } from "../tools/request";
 export default {
   name: "Home",
   data() {
@@ -194,7 +194,7 @@ export default {
     },
     findOld() {
       const uuid = "20220512171303011274387162093938";
-      get(`http://192.168.31.114:8089/wme/elder/queryById/${uuid}`).then(
+      get(`${host}/wme/elder/queryById/${uuid}`).then(
         (res) => {
           console.log("rerere", res);
         }
